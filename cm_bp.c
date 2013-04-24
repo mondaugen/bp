@@ -1,3 +1,4 @@
+#include <cm_bp.h> 
 #include <stdlib.h>
 #include <stdio.h> 
 #include <assert.h> 
@@ -11,7 +12,7 @@
  * D is stored in row-major order. */
 int
 cm_bp_lp_solve(double *D, size_t n, size_t p, double *x, double *s,
-        int solveflags)
+        unsigned int solveflags)
 {
     int err = 0;
     size_t i, j;
@@ -68,6 +69,9 @@ cm_bp_lp_solve(double *D, size_t n, size_t p, double *x, double *s,
     glp_smcp params;
     glp_init_smcp(&params);
     params.meth = GLP_DUALP;
+    params.msg_lev = GLP_MSG_OFF;
+    if (solveflags & CM_BP_LP_VERBOSE)
+        params.msg_lev = GLP_MSG_ALL;
 
     /* Solve the linear program */
     if((err = glp_simplex(lp, &params)) == 0) {
