@@ -12,7 +12,7 @@
 #include <gsl/gsl_blas.h> 
 #include <assert.h> 
 
-#define DICT_SIZE_PRINT_MAX 15 
+#define DICT_SIZE_PRINT_MAX 20 
 
 int
 main(int argc, char **argv)
