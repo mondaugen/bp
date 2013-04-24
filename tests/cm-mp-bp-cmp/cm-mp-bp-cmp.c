@@ -12,6 +12,8 @@
 #include <gsl/gsl_blas.h> 
 #include <assert.h> 
 
+#define DICT_SIZE_PRINT_MAX 15 
+
 int
 main(int argc, char **argv)
 {
@@ -49,11 +51,13 @@ main(int argc, char **argv)
 
     printf("Fourier dictionary.\n");
 
-    /* Print dictionary out */
-    for (i = 0; i < dict->n; i++) {
-        for (j = 0; j < dict->p; j++)
-            printf("%+1.3f ", cm_dg_get_c(dict, i, j)); 
-        printf("\n");
+    /* Print dictionary out (if dictionary not too big)*/
+    if (p < DICT_SIZE_PRINT_MAX) {
+        for (i = 0; i < dict->n; i++) {
+            for (j = 0; j < dict->p; j++)
+                printf("%+1.3f ", cm_dg_get_c(dict, i, j)); 
+            printf("\n");
+        }
     }
     /* Indicate which atoms make up signal */
     printf("Coefficients of atoms that make up signal.\n");
@@ -68,7 +72,7 @@ main(int argc, char **argv)
             }
         }
         if (!idx_in_gamma)
-            printf("       ");
+            printf("%+1.3f ", 0.);
     }
     printf("\n\n");
 
