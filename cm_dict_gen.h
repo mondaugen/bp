@@ -5,7 +5,8 @@
 
 typedef enum __cm_dg_dict_type {
     CM_DG_DICT_FOURIER,
-    CM_DG_DICT_IDENTITY
+    CM_DG_DICT_IDENTITY,
+    CM_DG_DICT_CUSTOM
 } cm_dg_dict_type;
 
 typedef struct __cm_dg_dict {
@@ -49,5 +50,21 @@ cm_dg_get_c(cm_dg_dict_t *d, size_t i, size_t j);
  * (starting from 1) */
 double
 cm_dg_get_m(cm_dg_dict_t *d, size_t i, size_t j);
+
+/* Allocate a dictionary of of waveforms loaded from the directory dir that
+ * match the wildcard pattern wc.
+ * n is the number of samples to read from the waveforms. If a file contains
+ * less than this number of samples, then the remaining samples will be 0.
+ * info is set to NULL */
+cm_dg_dict_t *
+cm_dg_dict_alloc_from_dir(size_t n, char *dir, char *wc);
+
+/* Combine two dictionaries to form a new dictionary */
+/* a and b are two dictionaries and infocombine is a function that will combine
+ * the two info fields or NULL if you don't care about the info field in the
+ * two dictionaries */
+cm_dg_dict_t *
+cm_dg_dict_combine(cm_dg_dict_t *a, cm_dg_dict_t *b,
+        void* (*infocombine)(void*,void*));
 
 #endif /* CM_DICT_GEN_H */

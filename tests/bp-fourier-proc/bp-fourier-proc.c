@@ -27,7 +27,7 @@ int main(int argc, char **argv)
     if (argc != 6) {
         fprintf(stderr, "args are %s path-to-soundfile "
                 "overcompleteness-parameter-l sampling-rate simplex|interior "
-		"dictionary\n", argv[0]);
+		        "dictionary\n", argv[0]);
         exit(1);
     }
 
