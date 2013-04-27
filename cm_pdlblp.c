@@ -110,6 +110,7 @@ _D_calc(gsl_vector *D, gsl_vector *x, gsl_vector *z, double gamma)
  * is size (n,p), t is size p, x is size p, v is size p, r is size n, delta is a
  * double, B is a matrix size (p+n,n), V is matrix size (n,n), g is vector size
  * (n+p) s is vector size(n), work is vector size (n) */
+int
 _delta_y_calc(gsl_vector *dy, gsl_vector *D, gsl_matrix *A, gsl_vector *t,
         gsl_vector *x, gsl_vector *v, gsl_vector *r, double delta, gsl_matrix *B,
         gsl_matrix *V, gsl_vector *g, gsl_vector *s, gsl_vector *work)
@@ -155,6 +156,37 @@ _delta_y_calc(gsl_vector *dy, gsl_vector *D, gsl_matrix *A, gsl_vector *t,
     /* answer is now in dy */
     return(0);
 }
+
+/* alternative delta y calculation. B is an nxn matrix, C is a nxp matrix, g is
+ * length n */
+int
+_delta_y_calc_alt(gsl_vector *dy, gsl_vector *D, gsl_matrix *A, double delta,
+        gsl_vector *r, gsl_vector *x, gsl_vector *v, gsl_vector *t,
+        gsl_matrix *B, gsl_matrix *C, gsl_vector *g)
+{
+    gsl_vector *tmp = gsl_vector_alloc(v->size);
+    gsl_vector_memcpy(tmp,v);
+    gsl_vector_div(tmp,x);
+    gsl_vector_sub(tmp,t);
+    gsl_vector_memcpy(g,r);
+    gsl_matrix_memcpy(C,A);
+    size_t i;
+    for (i = 0; i < C->size2; i++) {
+        gsl_vector_view C_col = gsl_matrix_column(C,i);
+        gsl_vector_scale(&C_col.vector, gsl_vector_get(D,i));
+    }
+    gsl_blas_dgemv(CblasNoTrans, -1., C, tmp, 1., g);
+    gsl_matrix_set_identity(B);
+    gsl_blas_dgemm(CblasNoTrans, CblasTrans, 1., C, A, delta*delta, B);
+    gsl_linalg_cholesky_decomp(C);
+    gsl_linalg_cholesky_solve(C,g,dy);
+    gsl_vector_free(tmp);
+    return(0);
+}
+
+
+
+
 
 /* calculate dx */
 _dx_calc(gsl_vector *dx, gsl_vector *D, gsl_matrix *A,

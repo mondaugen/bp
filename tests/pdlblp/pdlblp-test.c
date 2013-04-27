@@ -11,13 +11,13 @@ main(void)
 
     /* Regularization parameters */
     double gamma = 1.E-4;
-    double delta = 0.;
+    double delta = 1.E-4;
 
     /* Number of iterations */
-    size_t K = 2;
+    size_t K = 20;
 
     /* Value to initialize to */
-    double init = 0.1;
+    double init = 1./8.;
 
     /* Dictionary/constraint matrix */
     gsl_matrix *A = gsl_matrix_alloc(4,4);
@@ -26,10 +26,10 @@ main(void)
     /* Coefficient vector */
     gsl_vector *x = gsl_vector_alloc(4);
     /* Give a feasible solution */
-    gsl_vector_set(x,0,1.);
-    gsl_vector_set(x,1,2.);
-    gsl_vector_set(x,2,3.);
-    gsl_vector_set(x,3,4.);
+    gsl_vector_set(x,0,1./8.);
+    gsl_vector_set(x,1,1./8.);
+    gsl_vector_set(x,2,1./8.);
+    gsl_vector_set(x,3,1./8.);
 
     /* Signal vector */
     gsl_vector *b = gsl_vector_alloc(4);
@@ -42,7 +42,7 @@ main(void)
     gsl_vector *c = gsl_vector_alloc(4);
     gsl_vector_set_all(c,1.);
 
-    pdlblp_solve(x, A, b, c, 1.E-4, 1.E-4, K, 0., init, 0.001);
+    pdlblp_solve(x, A, b, c, gamma, delta, K, 0., init, 0.01);
 
     gsl_vector_fprintf(stdout, x, "%f");
 
