@@ -26,10 +26,10 @@ main(void)
     /* Coefficient vector */
     gsl_vector *x = gsl_vector_alloc(4);
     /* Give a feasible solution */
-    gsl_vector_set(x,0,1./8.);
-    gsl_vector_set(x,1,1./8.);
-    gsl_vector_set(x,2,1./8.);
-    gsl_vector_set(x,3,1./8.);
+    gsl_vector_set(x,0,1.);
+    gsl_vector_set(x,1,2.);
+    gsl_vector_set(x,2,3.);
+    gsl_vector_set(x,3,4.);
 
     /* Signal vector */
     gsl_vector *b = gsl_vector_alloc(4);

@@ -178,6 +178,12 @@ _delta_y_calc_alt(gsl_vector *dy, gsl_vector *D, gsl_matrix *A, double delta,
     gsl_blas_dgemv(CblasNoTrans, -1., C, tmp, 1., g);
     gsl_matrix_set_identity(B);
     gsl_blas_dgemm(CblasNoTrans, CblasTrans, 1., C, A, delta*delta, B);
+    for (i = 0; i < C->size1; i++) {
+        size_t j;
+        for (j = 0; j < C->size2; j++)
+            fprintf(stderr,"%1.3f ", gsl_matrix_get(C,i,j));
+        fprintf(stderr,"\n");
+    }
     gsl_linalg_cholesky_decomp(C);
     gsl_linalg_cholesky_solve(C,g,dy);
     gsl_vector_free(tmp);
@@ -242,8 +248,10 @@ pdlblp_solve(gsl_vector *x, gsl_matrix *A, gsl_vector *b, gsl_vector *c,
     p = A->size2;
 
     gsl_matrix *B, *V;
-    B = gsl_matrix_alloc(p+n,n);
-    V = gsl_matrix_alloc(n,n);
+//    B = gsl_matrix_alloc(p+n,n);
+    B = gsl_matrix_alloc(n,n);
+//    V = gsl_matrix_alloc(n,n);
+    V = gsl_matrix_alloc(n,p);
 
     gsl_vector *t, *y, *z, *r, *v, *D, *dx, *dy, *dz, *g, *s, *work;
 
@@ -256,9 +264,10 @@ pdlblp_solve(gsl_vector *x, gsl_matrix *A, gsl_vector *b, gsl_vector *c,
     dx   = gsl_vector_alloc(p);
     dy   = gsl_vector_alloc(n);
     dz   = gsl_vector_alloc(p);
-    g    = gsl_vector_alloc(p+n);
+//    g    = gsl_vector_alloc(p+n);
+    g    = gsl_vector_alloc(n);
     s    = gsl_vector_alloc(n);
-    work = gsl_vector_alloc(n);
+//    work = gsl_vector_alloc(n);
 
     /* initialize x, y, z, mu */
 //    gsl_vector_set_all(x,xinit);
@@ -283,7 +292,10 @@ pdlblp_solve(gsl_vector *x, gsl_matrix *A, gsl_vector *b, gsl_vector *c,
         _D_calc(D, x, z, gamma);
 
         /* calculate delta y */
-        _delta_y_calc(dy, D, A, t, x, v, r, delta, B, V, g, s, work);
+//        _delta_y_calc(dy, D, A, t, x, v, r, delta, B, V, g, s, work);
+
+
+        _delta_y_calc_alt(dy, D, A, delta, r, x, v, t, B, V, g);
 
         /* calculate dx */
         _dx_calc(dx, D, A, dy, x, v, t);
